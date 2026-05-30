@@ -1,5 +1,9 @@
 # payment-form-exercise
 
+## Task Description
+
+The translated task description is available in [`docs/task-description.md`](./docs/task-description.md).
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
