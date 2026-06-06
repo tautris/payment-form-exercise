@@ -1,5 +1,5 @@
 import { Box, Button, MenuItem, Stack, TextField } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 const PAYER_ACCOUNTS = [
 	{
@@ -19,12 +19,21 @@ const PAYER_ACCOUNTS = [
 	},
 ];
 
+type PaymentFormValues = {
+	payerAccount: string;
+	payee: string;
+	payeeAccount: string;
+	amount: string;
+	purpose: string;
+};
+
 export function PaymentForm() {
 	const {
+		control,
 		handleSubmit,
 		register,
 		formState: { errors },
-	} = useForm({
+	} = useForm<PaymentFormValues>({
 		defaultValues: {
 			payerAccount: "",
 			payee: "",
@@ -34,28 +43,34 @@ export function PaymentForm() {
 		},
 	});
 
-	const onSubmit = (values) => console.log(values);
+	const onSubmit = (values: PaymentFormValues) => console.log(values);
 
 	console.log("errors", errors);
 
 	return (
 		<Stack component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" spacing={4}>
 			<Box sx={{ display: "flex", alignItems: "center" }}>
-				<TextField
-					required
-					variant="outlined"
-					fullWidth
-					label="Payer Account"
-					type="text"
-					select
-					{...register("payerAccount")}
-				>
-					{PAYER_ACCOUNTS.map(({ iban, id, balance }) => (
-						<MenuItem key={id} value={iban}>
-							{iban} <Box sx={{ display: "inline", ml: 3 }}>{balance} EUR</Box>
-						</MenuItem>
-					))}
-				</TextField>
+				<Controller
+					name="payerAccount"
+					control={control}
+					render={({ field }) => (
+						<TextField
+							{...field}
+							required
+							variant="outlined"
+							fullWidth
+							label="Payer Account"
+							select
+							value={field.value ?? ""}
+						>
+							{PAYER_ACCOUNTS.map(({ iban, id, balance }) => (
+								<MenuItem key={id} value={iban}>
+									{iban} <Box sx={{ display: "inline", ml: 3 }}>{balance} EUR</Box>
+								</MenuItem>
+							))}
+						</TextField>
+					)}
+				/>
 			</Box>
 			<TextField required variant="outlined" fullWidth label="Payee" type="text" {...register("payee")} />
 			<TextField
