@@ -73,6 +73,8 @@ export function PaymentForm() {
 							label="Payer Account"
 							select
 							value={field.value ?? ""}
+							error={Boolean(errors.payerAccount)}
+							helperText={errors.payerAccount?.message}
 						>
 							{PAYER_ACCOUNTS.map(({ iban, id, balance }) => (
 								<MenuItem key={id} value={iban}>
@@ -83,7 +85,16 @@ export function PaymentForm() {
 					)}
 				/>
 			</Box>
-			<TextField required variant="outlined" fullWidth label="Payee" type="text" {...register("payee")} />
+			<TextField
+				required
+				variant="outlined"
+				fullWidth
+				label="Payee"
+				type="text"
+				{...register("payee")}
+				error={Boolean(errors.payee)}
+				helperText={errors.payee?.message}
+			/>
 			<TextField
 				required
 				variant="outlined"
@@ -91,6 +102,8 @@ export function PaymentForm() {
 				label="Payee Account"
 				type="text"
 				{...register("payeeAccount")}
+				error={Boolean(errors.payeeAccount)}
+				helperText={errors.payeeAccount?.message}
 			/>
 			<TextField
 				required
@@ -104,8 +117,19 @@ export function PaymentForm() {
 					},
 				}}
 				{...register("amount")}
+				error={Boolean(errors.amount)}
+				helperText={errors.amount?.message}
 			/>
-			<TextField required variant="outlined" fullWidth label="Purpose" type="text" {...register("purpose")} />
+			<TextField
+				required
+				variant="outlined"
+				fullWidth
+				label="Purpose"
+				type="text"
+				{...register("purpose")}
+				error={Boolean(errors.purpose)}
+				helperText={errors.purpose?.message}
+			/>
 
 			<Button type="submit" variant="contained" size="large">
 				Submit payment
