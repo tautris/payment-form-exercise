@@ -1,5 +1,7 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, MenuItem, Stack, TextField } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
+import z from "zod";
 
 const PAYER_ACCOUNTS = [
 	{
@@ -18,6 +20,14 @@ const PAYER_ACCOUNTS = [
 		balance: -5.87,
 	},
 ];
+
+const paymentFormSchema = z.object({
+	payerAccount: z.string(),
+	payee: z.string().max(70),
+	payeeAccount: z.string(), // have to validate using an endpoint
+	amount: z.string(), // min 0.01, max should be balance for a selected payee account
+	purpose: z.string().min(3).max(135),
+});
 
 type PaymentFormValues = {
 	payerAccount: string;
@@ -41,6 +51,7 @@ export function PaymentForm() {
 			amount: "",
 			purpose: "",
 		},
+		resolver: zodResolver(paymentFormSchema),
 	});
 
 	const onSubmit = (values: PaymentFormValues) => console.log(values);
@@ -81,7 +92,19 @@ export function PaymentForm() {
 				type="text"
 				{...register("payeeAccount")}
 			/>
-			<TextField required variant="outlined" fullWidth label="Amount" type="text" {...register("amount")} />
+			<TextField
+				required
+				variant="outlined"
+				fullWidth
+				label="Amount"
+				type="text"
+				slotProps={{
+					htmlInput: {
+						inputMode: "decimal",
+					},
+				}}
+				{...register("amount")}
+			/>
 			<TextField required variant="outlined" fullWidth label="Purpose" type="text" {...register("purpose")} />
 
 			<Button type="submit" variant="contained" size="large">
