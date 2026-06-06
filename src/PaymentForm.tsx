@@ -47,6 +47,16 @@ const paymentFormSchema = z
 			return;
 		}
 
+		if (payerAccount.balance < 0) {
+			context.addIssue({
+				code: "custom",
+				path: ["payerAccount"],
+				message: "No funds available for payment",
+			});
+
+			return;
+		}
+
 		if (values.amount > payerAccount.balance) {
 			context.addIssue({
 				code: "custom",
@@ -64,6 +74,7 @@ export function PaymentForm() {
 		control,
 		handleSubmit,
 		register,
+		trigger,
 		formState: { errors },
 	} = useForm<PaymentFormInput, undefined, PaymentFormOutput>({
 		defaultValues: {
@@ -74,6 +85,8 @@ export function PaymentForm() {
 			purpose: "",
 		},
 		resolver: zodResolver(paymentFormSchema),
+		mode: "onBlur",
+		reValidateMode: "onChange",
 	});
 
 	const onSubmit = (values: PaymentFormOutput) => {
@@ -97,6 +110,10 @@ export function PaymentForm() {
 							value={field.value ?? ""}
 							error={Boolean(errors.payerAccount)}
 							helperText={errors.payerAccount?.message}
+							onChange={async (event) => {
+								field.onChange(event);
+								await trigger(["payerAccount", "amount"]);
+							}}
 						>
 							{PAYER_ACCOUNTS.map(({ iban, id, balance }) => (
 								<MenuItem key={id} value={iban}>
