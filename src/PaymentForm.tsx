@@ -21,21 +21,43 @@ const PAYER_ACCOUNTS = [
 	},
 ];
 
-const paymentFormSchema = z.object({
-	payerAccount: z.string(),
-	payee: z.string().max(70),
-	payeeAccount: z.string(), // have to validate using an endpoint
-	amount: z.string(), // min 0.01, max should be balance for a selected payee account
-	purpose: z.string().min(3).max(135),
-});
+const amountSchema = z
+	.string()
+	.trim()
+	.min(1, "Amount is required")
+	.regex(/^\d+(?:[.,]\d{1,2})?$/, "Enter a valid amount")
+	.transform((value) => Number(value.replace(",", ".")))
+	.pipe(z.number().min(0.01, "Minimum amount is 0.01"));
 
-type PaymentFormValues = {
-	payerAccount: string;
-	payee: string;
-	payeeAccount: string;
-	amount: string;
-	purpose: string;
-};
+const paymentFormSchema = z
+	.object({
+		payerAccount: z.string().min(1, "Payer account is required"),
+		payee: z.string().trim().min(1, "Payee is required").max(70, "Payee cannot exceed 70 characters"),
+		payeeAccount: z.string().trim().min(1, "Payee account is required"), // have to validate using an endpoint
+		amount: amountSchema,
+		purpose: z
+			.string()
+			.min(3, "Purpose must contain at least 3 characters")
+			.max(135, "Purpose cannot exceed 135 characters"),
+	})
+	.superRefine((values, context) => {
+		const payerAccount = PAYER_ACCOUNTS.find((account) => account.iban === values.payerAccount);
+
+		if (!payerAccount) {
+			return;
+		}
+
+		if (values.amount > payerAccount.balance) {
+			context.addIssue({
+				code: "custom",
+				path: ["amount"],
+				message: `Not enough funds`,
+			});
+		}
+	});
+
+type PaymentFormInput = z.input<typeof paymentFormSchema>;
+type PaymentFormOutput = z.output<typeof paymentFormSchema>;
 
 export function PaymentForm() {
 	const {
@@ -43,7 +65,7 @@ export function PaymentForm() {
 		handleSubmit,
 		register,
 		formState: { errors },
-	} = useForm<PaymentFormValues>({
+	} = useForm<PaymentFormInput, undefined, PaymentFormOutput>({
 		defaultValues: {
 			payerAccount: "",
 			payee: "",
@@ -54,9 +76,9 @@ export function PaymentForm() {
 		resolver: zodResolver(paymentFormSchema),
 	});
 
-	const onSubmit = (values: PaymentFormValues) => console.log(values);
-
-	console.log("errors", errors);
+	const onSubmit = (values: PaymentFormOutput) => {
+		console.log(values);
+	};
 
 	return (
 		<Stack component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" spacing={4}>
