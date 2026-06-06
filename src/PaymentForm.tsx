@@ -1,4 +1,5 @@
 import { Box, Button, MenuItem, Stack, TextField } from "@mui/material";
+import { useForm } from "react-hook-form";
 
 const PAYER_ACCOUNTS = [
 	{
@@ -19,10 +20,36 @@ const PAYER_ACCOUNTS = [
 ];
 
 export function PaymentForm() {
+	const {
+		handleSubmit,
+		register,
+		formState: { errors },
+	} = useForm({
+		defaultValues: {
+			payerAccount: "",
+			payee: "",
+			payeeAccount: "",
+			amount: "",
+			purpose: "",
+		},
+	});
+
+	const onSubmit = (values) => console.log(values);
+
+	console.log("errors", errors);
+
 	return (
-		<Stack component="form" noValidate autoComplete="off" spacing={4}>
+		<Stack component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" spacing={4}>
 			<Box sx={{ display: "flex", alignItems: "center" }}>
-				<TextField required variant="outlined" fullWidth label="Payer Account" type="text" select>
+				<TextField
+					required
+					variant="outlined"
+					fullWidth
+					label="Payer Account"
+					type="text"
+					select
+					{...register("payerAccount")}
+				>
 					{PAYER_ACCOUNTS.map(({ iban, id, balance }) => (
 						<MenuItem key={id} value={iban}>
 							{iban} <Box sx={{ display: "inline", ml: 3 }}>{balance} EUR</Box>
@@ -30,10 +57,17 @@ export function PaymentForm() {
 					))}
 				</TextField>
 			</Box>
-			<TextField required variant="outlined" fullWidth label="Payee" type="text" />
-			<TextField required variant="outlined" fullWidth label="Payee Account" type="text" />
-			<TextField required variant="outlined" fullWidth label="Amount" type="text" />
-			<TextField required variant="outlined" fullWidth label="Purpose" type="text" />
+			<TextField required variant="outlined" fullWidth label="Payee" type="text" {...register("payee")} />
+			<TextField
+				required
+				variant="outlined"
+				fullWidth
+				label="Payee Account"
+				type="text"
+				{...register("payeeAccount")}
+			/>
+			<TextField required variant="outlined" fullWidth label="Amount" type="text" {...register("amount")} />
+			<TextField required variant="outlined" fullWidth label="Purpose" type="text" {...register("purpose")} />
 
 			<Button type="submit" variant="contained" size="large">
 				Submit payment
