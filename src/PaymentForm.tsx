@@ -3,6 +3,7 @@ import { Box, Button, MenuItem, Stack, TextField } from "@mui/material";
 import type { ChangeEvent, FocusEvent } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
+import { AccountBalanceLabel } from "./components/AccountBalanceLabel";
 import { validateIban } from "./services/validateIban";
 
 const PAYER_ACCOUNTS = [
@@ -192,7 +193,7 @@ export function PaymentForm() {
 						>
 							{PAYER_ACCOUNTS.map(({ iban, id, balance }) => (
 								<MenuItem key={id} value={iban}>
-									{iban} <Box sx={{ display: "inline", ml: 3 }}>{balance} EUR</Box>
+									<AccountBalanceLabel iban={iban} balance={balance} />
 								</MenuItem>
 							))}
 						</TextField>
