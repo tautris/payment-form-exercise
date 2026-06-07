@@ -73,6 +73,7 @@ type PaymentFormOutput = z.output<typeof paymentFormSchema>;
 export function PaymentForm() {
 	const {
 		control,
+		getFieldState,
 		handleSubmit,
 		register,
 		trigger,
@@ -130,8 +131,14 @@ export function PaymentForm() {
 							error={Boolean(errors.payerAccount)}
 							helperText={errors.payerAccount?.message}
 							onChange={async (event) => {
+								const { isTouched: amountTouched, invalid: amountInvalid } = getFieldState("amount");
+
 								field.onChange(event);
-								await trigger(["payerAccount", "amount"]);
+								await trigger("payerAccount");
+
+								if (amountTouched || amountInvalid) {
+									await trigger("amount");
+								}
 							}}
 						>
 							{PAYER_ACCOUNTS.map(({ iban, id, balance }) => (

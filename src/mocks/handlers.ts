@@ -13,6 +13,6 @@ export const handlers = [
 			return new HttpResponse('Please provide an "iban" parameter.', { status: 400 });
 		}
 
-		return HttpResponse.json({ iban, valid: false });
+		return HttpResponse.json({ iban, valid: true });
 	}),
 ];
