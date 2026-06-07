@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, MenuItem, Stack, TextField } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
+import { validateIban } from "./services/validateIban";
 
 const PAYER_ACCOUNTS = [
 	{
@@ -75,7 +76,8 @@ export function PaymentForm() {
 		handleSubmit,
 		register,
 		trigger,
-		formState: { errors },
+		setError,
+		formState: { errors, isSubmitting },
 	} = useForm<PaymentFormInput, undefined, PaymentFormOutput>({
 		defaultValues: {
 			payerAccount: "",
@@ -89,8 +91,25 @@ export function PaymentForm() {
 		reValidateMode: "onChange",
 	});
 
-	const onSubmit = (values: PaymentFormOutput) => {
-		console.log(values);
+	const onSubmit = async (values: PaymentFormOutput) => {
+		try {
+			const valid = await validateIban(values.payeeAccount);
+
+			if (!valid) {
+				setError("payeeAccount", {
+					type: "server",
+					message: "Invalid IBAN",
+				});
+				return;
+			}
+
+			console.log(values);
+		} catch {
+			setError("payeeAccount", {
+				type: "server",
+				message: "Unable to validate IBAN. Please try again.",
+			});
+		}
 	};
 
 	return (
@@ -170,7 +189,7 @@ export function PaymentForm() {
 				helperText={errors.purpose?.message}
 			/>
 
-			<Button type="submit" variant="contained" size="large">
+			<Button type="submit" variant="contained" size="large" loading={isSubmitting} disabled={isSubmitting}>
 				Submit payment
 			</Button>
 		</Stack>
