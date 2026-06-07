@@ -1,2 +1,4 @@
+allowBuilds:
+  msw: true
 overrides:
   "electron-to-chromium": "1.5.362"
