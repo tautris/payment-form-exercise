@@ -10,10 +10,10 @@ function App() {
 				minHeight: "100vh",
 				bgcolor: "background.default",
 				color: "text.primary",
-				py: 4,
+				py: { xs: 2, sm: 4 },
 			}}
 		>
-			<Container maxWidth="sm">
+			<Container maxWidth="sm" sx={{ px: { xs: 2 } }}>
 				<Stack spacing={3}>
 					<Box>
 						<Typography component="h1" variant="h4" gutterBottom>
@@ -24,10 +24,10 @@ function App() {
 					<Paper
 						elevation={0}
 						sx={{
-							p: { xs: 4, sm: 5 },
-							border: 1,
+							p: { xs: 0, sm: 5 },
+							border: { xs: 0, sm: 1 },
 							borderColor: "divider",
-							borderRadius: 2,
+							borderRadius: { xs: 0, sm: 2 },
 						}}
 					>
 						<PaymentForm />

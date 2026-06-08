@@ -91,7 +91,7 @@ export function PaymentForm() {
 	};
 
 	return (
-		<Stack component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" spacing={4}>
+		<Stack component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" spacing={{ xs: 3, sm: 4 }}>
 			<Box sx={{ display: "flex", alignItems: "center" }}>
 				<Controller
 					name="payerAccount"
