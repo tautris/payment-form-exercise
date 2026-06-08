@@ -1,19 +1,43 @@
-# payment-form-exercise
+# Payment Form Exercise
+
+[Live demo](https://tautris.github.io/payment-form-exercise/)
+
+A React and TypeScript payment form implementing account selection, balance-aware validation, and remote IBAN validation.
+
+## Features
+
+- Payer account selection with available balances
+- Required-field and length validation
+- Amount validation against the selected account balance
+- Support for decimal comma and decimal point input
+- Remote payee IBAN validation
+- Submission summary dialog
+- Error handling for failed IBAN validation requests
+- Unit tests for form rules and the IBAN service
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- Material UI
+- React Hook Form
+- Zod
+- Vitest
+- Mock Service Worker
+- Biome
+
+## Getting Started
+
+Requires Node.js and pnpm.
+
+```bash 
+pnpm install
+pnpm dev
+```
+
+Check for other common commands available in [`package.json`](./package.json).
 
 ## Task Description
 
 The translated task description is available in [`docs/task-description.md`](./docs/task-description.md).
-
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
