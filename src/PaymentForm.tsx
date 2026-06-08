@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, MenuItem, Stack, TextField } from "@mui/material";
+import { Box, Button, InputAdornment, MenuItem, Stack, TextField } from "@mui/material";
 import type { ChangeEvent, FocusEvent } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
 import { AccountBalanceLabel } from "./components/AccountBalanceLabel";
 import { validateIban } from "./services/validateIban";
@@ -98,6 +98,7 @@ export function PaymentForm() {
 		mode: "onSubmit",
 		reValidateMode: "onChange",
 	});
+	const purposeValue = useWatch({ control, name: "purpose" });
 
 	const validateOnBlur =
 		(
@@ -237,6 +238,9 @@ export function PaymentForm() {
 					htmlInput: {
 						inputMode: "decimal",
 					},
+					input: {
+						endAdornment: <InputAdornment position="end">EUR</InputAdornment>,
+					},
 				}}
 				error={Boolean(errors.amount)}
 				helperText={errors.amount?.message}
@@ -250,8 +254,17 @@ export function PaymentForm() {
 				fullWidth
 				label="Purpose"
 				type="text"
+				multiline
+				minRows={2}
 				error={Boolean(errors.purpose)}
-				helperText={errors.purpose?.message}
+				helperText={
+					<Box component="span" sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
+						<Box component="span">{errors.purpose?.message}</Box>
+						<Box component="span" sx={{ color: "text.disabled", whiteSpace: "nowrap" }}>
+							{purposeValue.length}/135
+						</Box>
+					</Box>
+				}
 			/>
 
 			<Button type="submit" variant="contained" size="large" loading={isSubmitting} disabled={isSubmitting}>
