@@ -12,6 +12,7 @@ export function PaymentForm() {
 	const {
 		control,
 		getFieldState,
+		getValues,
 		handleSubmit,
 		register,
 		reset,
@@ -115,7 +116,8 @@ export function PaymentForm() {
 							}}
 							onChange={async (event) => {
 								const payerAccountHadError = getFieldState("payerAccount").invalid;
-								const { isTouched: amountTouched, invalid: amountInvalid } = getFieldState("amount");
+								const { invalid: amountInvalid } = getFieldState("amount");
+								const amountValue = getValues("amount");
 
 								field.onChange(event);
 
@@ -123,7 +125,7 @@ export function PaymentForm() {
 									await trigger("payerAccount");
 								}
 
-								if (amountTouched || amountInvalid) {
+								if (amountValue.trim() !== "" || amountInvalid) {
 									await trigger("amount");
 								}
 							}}
