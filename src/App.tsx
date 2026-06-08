@@ -1,6 +1,6 @@
 import "./App.css";
 import { Box, Container, Paper, Stack, Typography } from "@mui/material";
-import { PaymentForm } from "./PaymentForm.tsx";
+import { PaymentForm } from "./PaymentForm";
 
 function App() {
 	return (
