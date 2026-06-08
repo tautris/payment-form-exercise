@@ -1,17 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, InputAdornment, MenuItem, Stack, TextField } from "@mui/material";
-import type { ChangeEvent, FocusEvent } from "react";
+import { type ChangeEvent, type FocusEvent, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { AccountBalanceLabel } from "./components/AccountBalanceLabel";
+import { PaymentSubmittedDialog } from "./components/PaymentSubmittedDialog";
 import { PAYER_ACCOUNTS, type PaymentFormInput, type PaymentFormOutput, paymentFormSchema } from "./paymentFormSchema";
 import { validateIban } from "./services/validateIban";
 
 export function PaymentForm() {
+	const [submittedPayment, setSubmittedPayment] = useState<PaymentFormOutput | null>(null);
 	const {
 		control,
 		getFieldState,
 		handleSubmit,
 		register,
+		reset,
 		trigger,
 		setError,
 		formState: { errors, isSubmitting, submitCount },
@@ -73,13 +76,17 @@ export function PaymentForm() {
 				return;
 			}
 
-			console.log(values);
+			setSubmittedPayment(values);
 		} catch {
 			setError("payeeAccount", {
 				type: "server",
 				message: "Unable to validate IBAN. Please try again.",
 			});
 		}
+	};
+	const createNewPayment = () => {
+		reset();
+		setSubmittedPayment(null);
 	};
 
 	return (
@@ -199,6 +206,7 @@ export function PaymentForm() {
 			<Button type="submit" variant="contained" size="large" loading={isSubmitting} disabled={isSubmitting}>
 				Submit payment
 			</Button>
+			<PaymentSubmittedDialog payment={submittedPayment} onCreateNewPayment={createNewPayment} />
 		</Stack>
 	);
 }
