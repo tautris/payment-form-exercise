@@ -1,15 +1,17 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from "@mui/material";
+import { type AmountLocale, formatAmount } from "../formatAmount";
 import type { PaymentFormOutput } from "../paymentFormSchema";
 
 type PaymentSubmittedDialogProps = {
 	payment: PaymentFormOutput | null;
+	locale: AmountLocale;
 	onCreateNewPayment: () => void;
 };
 
-export function PaymentSubmittedDialog({ payment, onCreateNewPayment }: PaymentSubmittedDialogProps) {
+export function PaymentSubmittedDialog({ payment, locale, onCreateNewPayment }: PaymentSubmittedDialogProps) {
 	const summary = payment
 		? [
-				{ label: "Amount", value: `${payment.amount.toFixed(2)} EUR` },
+				{ label: "Amount", value: `${formatAmount(payment.amount, locale)} EUR` },
 				{ label: "Payee", value: payment.payee },
 				{ label: "Payee account", value: payment.payeeAccount },
 				{ label: "Payer account", value: payment.payerAccount },

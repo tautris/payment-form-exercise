@@ -1,8 +1,12 @@
 import "./App.css";
-import { Box, Container, Paper, Stack, Typography } from "@mui/material";
+import { Box, Container, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
+import { useState } from "react";
+import type { AmountLocale } from "./formatAmount";
 import { PaymentForm } from "./PaymentForm";
 
 function App() {
+	const [amountLocale, setAmountLocale] = useState<AmountLocale>("en-US");
+
 	return (
 		<Box
 			component="main"
@@ -15,10 +19,29 @@ function App() {
 		>
 			<Container maxWidth="sm" sx={{ px: { xs: 2 } }}>
 				<Stack spacing={3}>
-					<Box>
-						<Typography component="h1" variant="h4" gutterBottom>
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: { xs: "column", sm: "row" },
+							alignItems: { xs: "stretch", sm: "center" },
+							justifyContent: "space-between",
+							gap: 2,
+						}}
+					>
+						<Typography component="h1" variant="h4">
 							New payment
 						</Typography>
+						<TextField
+							select
+							size="small"
+							label="Amount format"
+							value={amountLocale}
+							onChange={(event) => setAmountLocale(event.target.value as AmountLocale)}
+							sx={{ alignSelf: { xs: "flex-end", sm: "center" }, width: 160 }}
+						>
+							<MenuItem value="en-US">English</MenuItem>
+							<MenuItem value="lt-LT">Lithuanian</MenuItem>
+						</TextField>
 					</Box>
 
 					<Paper
@@ -30,7 +53,7 @@ function App() {
 							borderRadius: { xs: 0, sm: 2 },
 						}}
 					>
-						<PaymentForm />
+						<PaymentForm amountLocale={amountLocale} />
 					</Paper>
 				</Stack>
 			</Container>

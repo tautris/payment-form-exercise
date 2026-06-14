@@ -1,11 +1,13 @@
 import { Box, Typography } from "@mui/material";
+import { type AmountLocale, formatAmount } from "../formatAmount";
 
 type AccountBalanceLabelProps = {
 	iban: string;
 	balance: number;
+	locale: AmountLocale;
 };
 
-export function AccountBalanceLabel({ iban, balance }: AccountBalanceLabelProps) {
+export function AccountBalanceLabel({ iban, balance, locale }: AccountBalanceLabelProps) {
 	const hasInsufficientFunds = balance < 0;
 
 	return (
@@ -30,7 +32,7 @@ export function AccountBalanceLabel({ iban, balance }: AccountBalanceLabelProps)
 				}}
 			>
 				<Typography component="span" variant="body1">
-					{balance.toFixed(2)} EUR
+					{formatAmount(balance, locale)} EUR
 				</Typography>
 				{hasInsufficientFunds && (
 					<Typography component="span" variant="caption" sx={{ fontWeight: 500 }}>

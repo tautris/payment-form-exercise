@@ -78,6 +78,10 @@ describe("paymentFormSchema", () => {
 		expect(result.amount).toBe(10.25);
 	});
 
+	it.each(["1,000.01", "1\u00a0000,01"])("rejects the grouped amount %s", (amount) => {
+		expectValidationIssue({ amount }, "amount", "Enter a valid amount");
+	});
+
 	it("rejects an unknown payer account", () => {
 		expectValidationIssue({ payerAccount: "LT000000000000000000" }, "payerAccount", "Select a valid payer account");
 	});

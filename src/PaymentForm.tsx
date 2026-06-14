@@ -4,10 +4,16 @@ import { type ChangeEvent, type FocusEvent, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { AccountBalanceLabel } from "./components/AccountBalanceLabel";
 import { PaymentSubmittedDialog } from "./components/PaymentSubmittedDialog";
+import { type AmountLocale, getAmountDisplayValue } from "./formatAmount";
 import { PAYER_ACCOUNTS, type PaymentFormInput, type PaymentFormOutput, paymentFormSchema } from "./paymentFormSchema";
 import { validateIban } from "./services/validateIban";
 
-export function PaymentForm() {
+type PaymentFormProps = {
+	amountLocale: AmountLocale;
+};
+
+export function PaymentForm({ amountLocale }: PaymentFormProps) {
+	const [amountFocused, setAmountFocused] = useState(false);
 	const [submittedPayment, setSubmittedPayment] = useState<PaymentFormOutput | null>(null);
 	const {
 		control,
@@ -37,8 +43,10 @@ export function PaymentForm() {
 		(
 			fieldName: "payee" | "payeeAccount" | "amount" | "purpose",
 			onBlur: (event: FocusEvent<HTMLInputElement>) => void,
+			beforeBlur?: () => void,
 		) =>
 		async (event: FocusEvent<HTMLInputElement>) => {
+			beforeBlur?.();
 			onBlur(event);
 
 			if (submitCount === 0 && event.target.value.trim() !== "") {
@@ -62,7 +70,6 @@ export function PaymentForm() {
 
 	const payeeField = register("payee");
 	const payeeAccountField = register("payeeAccount");
-	const amountField = register("amount");
 	const purposeField = register("purpose");
 
 	const onSubmit = async (values: PaymentFormOutput) => {
@@ -132,7 +139,7 @@ export function PaymentForm() {
 						>
 							{PAYER_ACCOUNTS.map(({ iban, id, balance }) => (
 								<MenuItem key={id} value={iban}>
-									<AccountBalanceLabel iban={iban} balance={balance} />
+									<AccountBalanceLabel iban={iban} balance={balance} locale={amountLocale} />
 								</MenuItem>
 							))}
 						</TextField>
@@ -163,25 +170,33 @@ export function PaymentForm() {
 				error={Boolean(errors.payeeAccount)}
 				helperText={errors.payeeAccount?.message}
 			/>
-			<TextField
-				{...amountField}
-				onBlur={validateOnBlur("amount", amountField.onBlur)}
-				onChange={revalidateErrorOnChange("amount", amountField.onChange)}
-				required
-				variant="outlined"
-				fullWidth
-				label="Amount"
-				type="text"
-				slotProps={{
-					htmlInput: {
-						inputMode: "decimal",
-					},
-					input: {
-						endAdornment: <InputAdornment position="end">EUR</InputAdornment>,
-					},
-				}}
-				error={Boolean(errors.amount)}
-				helperText={errors.amount?.message}
+			<Controller
+				name="amount"
+				control={control}
+				render={({ field }) => (
+					<TextField
+						{...field}
+						value={getAmountDisplayValue(field.value, amountLocale, amountFocused)}
+						onFocus={() => setAmountFocused(true)}
+						onBlur={validateOnBlur("amount", field.onBlur, () => setAmountFocused(false))}
+						onChange={revalidateErrorOnChange("amount", field.onChange)}
+						required
+						variant="outlined"
+						fullWidth
+						label="Amount"
+						type="text"
+						slotProps={{
+							htmlInput: {
+								inputMode: "decimal",
+							},
+							input: {
+								endAdornment: <InputAdornment position="end">EUR</InputAdornment>,
+							},
+						}}
+						error={Boolean(errors.amount)}
+						helperText={errors.amount?.message}
+					/>
+				)}
 			/>
 			<TextField
 				{...purposeField}
@@ -210,7 +225,7 @@ export function PaymentForm() {
 			<Button type="submit" variant="contained" size="large" loading={isSubmitting} disabled={isSubmitting}>
 				Submit payment
 			</Button>
-			<PaymentSubmittedDialog payment={submittedPayment} onCreateNewPayment={createNewPayment} />
+			<PaymentSubmittedDialog payment={submittedPayment} locale={amountLocale} onCreateNewPayment={createNewPayment} />
 		</Stack>
 	);
 }

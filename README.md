@@ -7,6 +7,7 @@ A React and TypeScript payment form implementing account selection, balance-awar
 ## Features
 
 - Payer account selection with available balances
+- Explicit English and Lithuanian amount formatting
 - Required-field and length validation
 - Amount validation against the selected account balance
 - Support for decimal comma and decimal point input
