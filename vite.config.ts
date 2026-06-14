@@ -6,7 +6,7 @@ export default defineConfig(({ command }) => ({
 	base: command === "build" ? "/payment-form-exercise/" : "/",
 	plugins: [react()],
 	test: {
-		environment: "node",
+		environment: "jsdom",
 		setupFiles: ["./src/test/setup.ts"],
 	},
 }));
