@@ -4,9 +4,10 @@ import {
 	configureIbanValidationHttpError,
 	configureIbanValidationResult,
 	configureMalformedIbanValidationResponse,
+	configurePendingIbanValidationRequest,
 	observeIbanValidationRequest,
 } from "../test/configure-mock-server";
-import { validateIban } from "./validateIban";
+import { IbanValidationTimeoutError, validateIban } from "./validateIban";
 
 describe("validateIban", () => {
 	it("returns true when the endpoint validates the IBAN", async () => {
@@ -42,5 +43,13 @@ describe("validateIban", () => {
 		configureMalformedIbanValidationResponse();
 
 		await expect(validateIban("LT307300010172619164")).rejects.toBeInstanceOf(ZodError);
+	});
+
+	it("aborts validation when the endpoint exceeds the timeout", async () => {
+		configurePendingIbanValidationRequest();
+
+		await expect(validateIban("LT307300010172619164", { timeoutMs: 10 })).rejects.toBeInstanceOf(
+			IbanValidationTimeoutError,
+		);
 	});
 });

@@ -1,4 +1,4 @@
-import { HttpResponse, http } from "msw";
+import { delay, HttpResponse, http } from "msw";
 import { server } from "../mocks/server";
 
 const VALIDATE_IBAN_URL = "https://matavi.eu/validate/";
@@ -30,4 +30,14 @@ export function configureIbanValidationHttpError(status: number) {
 
 export function configureMalformedIbanValidationResponse() {
 	server.use(http.get(VALIDATE_IBAN_URL, () => HttpResponse.json({ valid: "yes" })));
+}
+
+export function configurePendingIbanValidationRequest() {
+	server.use(
+		http.get(VALIDATE_IBAN_URL, async () => {
+			await delay("infinite");
+
+			return new HttpResponse();
+		}),
+	);
 }
