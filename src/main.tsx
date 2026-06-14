@@ -1,4 +1,4 @@
-import { CssBaseline, createTheme, ThemeProvider } from "@mui/material";
+import { CssBaseline, createTheme, responsiveFontSizes, ThemeProvider } from "@mui/material";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -23,7 +23,7 @@ if (!rootElement) {
 	throw new Error("Root element not found");
 }
 
-const theme = createTheme({
+let theme = createTheme({
 	palette: {
 		mode: "light",
 	},
@@ -31,6 +31,8 @@ const theme = createTheme({
 		fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 	},
 });
+
+theme = responsiveFontSizes(theme);
 
 enableMocking().then(() => {
 	createRoot(rootElement).render(
