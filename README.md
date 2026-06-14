@@ -14,7 +14,7 @@ A React and TypeScript payment form implementing account selection, balance-awar
 - Remote payee IBAN validation
 - Submission summary dialog
 - Error handling for failed IBAN validation requests
-- Unit tests for form rules and the IBAN service
+- Unit and DOM integration tests for form rules, user flows, remote validation, and locale formatting
 
 ## Tech Stack
 
@@ -25,6 +25,7 @@ A React and TypeScript payment form implementing account selection, balance-awar
 - React Hook Form
 - Zod
 - Vitest
+- React Testing Library
 - Mock Service Worker
 - Biome
 
