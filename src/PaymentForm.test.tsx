@@ -31,4 +31,29 @@ describe("PaymentForm", () => {
 		expect(dialog).toHaveTextContent(PAYER_ACCOUNTS[0].iban);
 		expect(dialog).toHaveTextContent("Invoice payment");
 	});
+
+	it("displays required-field feedback when an empty form is submitted", async () => {
+		const user = userEvent.setup();
+		render(<PaymentForm amountLocale="en-US" />);
+
+		await user.click(screen.getByRole("button", { name: /submit payment/i }));
+
+		expect(await screen.findByText("Payer account is required")).toBeVisible();
+		expect(screen.getByText("Payee is required")).toBeVisible();
+		expect(screen.getByText("Payee account is required")).toBeVisible();
+		expect(screen.getByText("Amount is required")).toBeVisible();
+		expect(screen.getByText("Payment purpose is required")).toBeVisible();
+	});
+
+	it("displays an error when the amount exceeds the selected account balance", async () => {
+		const user = userEvent.setup();
+		render(<PaymentForm amountLocale="en-US" />);
+
+		await user.click(screen.getByRole("combobox", { name: /payer account/i }));
+		await user.click(screen.getByRole("option", { name: new RegExp(PAYER_ACCOUNTS[1].iban) }));
+		await user.type(screen.getByRole("textbox", { name: /amount/i }), "2.44");
+		await user.tab();
+
+		expect(await screen.findByText("Not enough funds")).toBeVisible();
+	});
 });
