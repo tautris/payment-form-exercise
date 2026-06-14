@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, InputAdornment, MenuItem, Stack, TextField } from "@mui/material";
+import { Box, Button, InputAdornment, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { type ChangeEvent, type FocusEvent, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { AccountBalanceLabel } from "./components/AccountBalanceLabel";
@@ -197,10 +197,12 @@ export function PaymentForm() {
 				error={Boolean(errors.purpose)}
 				helperText={
 					<Box component="span" sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
-						<Box component="span">{errors.purpose?.message}</Box>
-						<Box component="span" sx={{ color: "text.disabled", whiteSpace: "nowrap" }}>
+						<Typography component="span" variant="caption">
+							{errors.purpose?.message}
+						</Typography>
+						<Typography component="span" variant="caption" sx={{ color: "text.disabled", whiteSpace: "nowrap" }}>
 							{purposeValue.length}/135
-						</Box>
+						</Typography>
 					</Box>
 				}
 			/>
